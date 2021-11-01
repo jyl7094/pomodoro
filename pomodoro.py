@@ -116,13 +116,13 @@ class ControllerFrame(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        self.start_btn = tk.Button(self, text='Start', pady=5, command=lambda: self.toggle_timer('start'))
-        self.pause_btn = tk.Button(self, text='Pause', state='disabled', pady=5, command=lambda: self.toggle_timer('pause'))
+        self.start_btn = tk.Button(self, text='Start', pady=5, command=lambda: self.toggle_btn('start'))
+        self.pause_btn = tk.Button(self, text='Pause', state='disabled', pady=5, command=lambda: self.toggle_btn('pause'))
 
         self.start_btn.grid(row=0, column=0)
         self.pause_btn.grid(row=0, column=2)
 
-    def toggle_timer(self, val:str):
+    def toggle_btn(self, val:str):
         if val == 'start':
             self.started = 'start'
             self.start_btn.config(state='disabled')
@@ -150,8 +150,11 @@ class App(tk.Tk):
 
     def update(self):
         started = self.controller.get_started()
+        option = self.option.get_option()
+
         if self.timer.get_time() <= 0 and self.after_id != None:
-            self.after_cancel(self.after_id)
+            started = 'pause'
+            self.controller.pause_btn.config(state='disabled')
         if started == 'start':
             self.running = True
             self.option.toggle_options('disable')
@@ -164,14 +167,19 @@ class App(tk.Tk):
                 self.after_cancel(self.after_id)
 
         if not self.running:
-            option = self.option.get_option()
             self.timer.set_time(self.timer.get_time()/60000)
             if option == 'p' and self.option.get_clicked():
                 self.timer.set_time(25)
+                self.controller.start_btn.config(state='normal')
+                self.controller.pause_btn.config(state='disabled')
             elif option == 'sb' and self.option.get_clicked():
-                self.timer.set_time(5)
+                self.timer.set_time(0.05)
+                self.controller.start_btn.config(state='normal')
+                self.controller.pause_btn.config(state='disabled')
             elif option == 'lb' and self.option.get_clicked():
                 self.timer.set_time(15)
+                self.controller.start_btn.config(state='normal')
+                self.controller.pause_btn.config(state='disabled')
         self.option.set_clicked(False)
         
         self.after(100, self.update)
@@ -207,12 +215,12 @@ class App(tk.Tk):
     def create_widgets(self):
         self.option = OptionFrame(self)
         self.timer = TimerFrame(self)
-        self.info = InfoFrame(self)
+        # self.info = InfoFrame(self)
         self.controller = ControllerFrame(self)
         
         self.option.grid(row=0, column=0)
         self.timer.grid(row=1, column=0)
-        self.info.grid(row=2, column=0)
+        # self.info.grid(row=2, column=0)
         self.controller.grid(row=3, column=0)
 
 
