@@ -173,7 +173,7 @@ class App(tk.Tk):
                 self.controller.start_btn.config(state='normal')
                 self.controller.pause_btn.config(state='disabled')
             elif option == 'sb' and self.option.get_clicked():
-                self.timer.set_time(0.05)
+                self.timer.set_time(5)
                 self.controller.start_btn.config(state='normal')
                 self.controller.pause_btn.config(state='disabled')
             elif option == 'lb' and self.option.get_clicked():
